@@ -1,7 +1,7 @@
 import datetime
 import pynwb
 import numpy as np
-from timeseries import getTimeSeriesAdapter
+from .timeseries import getTimeSeriesAdapter
 
 
 class NwbSd(object):
