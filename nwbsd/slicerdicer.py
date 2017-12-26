@@ -15,7 +15,7 @@ class NwbSd(object):
         return [i.name for i in self.nwb.stimulus]
 
     def _getProcessingModuleName(self):
-        return self.nwb.modules.keys()[0]
+        return list(self.nwb.modules.keys())[0]
 
     def getContainers(self):
         """Returns a list of all containers"""
