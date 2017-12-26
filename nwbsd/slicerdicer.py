@@ -24,8 +24,9 @@ class NwbSd(object):
 
     def getSessionStartTime(self):
         """Returns the session start time"""
-        nwbTime = str.join(' ', self.nwb.session_start_time.split(None)[1:7])
-        return datetime.datetime.strptime(nwbTime, '%b %d %H:%M:%S %Y')
+        fmt = '%b %d %H:%M:%S %Y'
+        nwbTime = self.nwb.session_start_time.strftime(fmt)
+        return datetime.datetime.strptime(nwbTime, fmt)
 
     def getStimulusTimeStamps(self, stimulus):
         """Returns a list of timestamps for a stimulus"""
