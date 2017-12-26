@@ -96,3 +96,23 @@ def test_get_stimulus_data_shape(nwbSd, stimulus, index, shape):
 def test_get_timeseries_from_container(nwbSd, container, timeSeries):
     series = nwbSd.getTimeSeries(container)
     _compareLists(series, timeSeries)
+
+
+@pytest.mark.parametrize('container, timeSeries, length', [
+    ('BehavioralTimeSeries', 'running_speed', 113654),
+    ('DfOverF', 'imaging_plane_1', 113820),
+    ('EyeTracking', 'pupil_location', 113820),
+    ('EyeTracking', 'pupil_location_spherical', 113820),
+    ('Fluorescence', 'imaging_plane_1', 113820),
+    ('Fluorescence', 'imaging_plane_1_demixed_signal', 113820),
+    ('Fluorescence', 'imaging_plane_1_neuropil_response', 113820),
+    ('ImageSegmentation', 'imaging_plane_1', None),
+    ('MotionCorrection', '2p_image_series', 113820),
+    ('PupilTracking', 'pupil_size', 113820)
+])
+def test_get_timestamps_from_timeseries(nwbSd, container, timeSeries, length):
+    timeStamps = nwbSd.getTimeSeriesTimeStamps(container, timeSeries)
+    if length is not None:
+        assert len(timeStamps) == length
+    else:
+        assert timeStamps is None

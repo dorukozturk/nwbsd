@@ -1,6 +1,8 @@
 import abc
 import six
 
+# TODO: Should get the field names from yaml spec files (Currently hardcoded)
+
 
 @six.add_metaclass(abc.ABCMeta)
 class AbstractContainer(object):
@@ -13,11 +15,18 @@ class AbstractContainer(object):
     def getTimeSeries(self):
         pass
 
+    @abc.abstractmethod
+    def getTimeSeriesTimeStamps(self, timeSeries):
+        pass
+
 
 class BehavioralTimeSeriesAdapter(AbstractContainer):
     def getTimeSeries(self):
         fields = self.container.fields
         return [fields['time_series'].name]
+
+    def getTimeSeriesTimeStamps(self, timeSeries):
+        return self.container.time_series.timestamps.value
 
 
 class DfOverFAdapter(AbstractContainer):
@@ -25,11 +34,18 @@ class DfOverFAdapter(AbstractContainer):
         fields = self.container.fields
         return [i.name for i in fields['roi_response_series']]
 
+    def getTimeSeriesTimeStamps(self, timeSeries):
+        return self.container.roi_response_series[0].timestamps
+
 
 class EyeTrackingAdapter(AbstractContainer):
     def getTimeSeries(self):
         fields = self.container.fields
         return [i.name for i in fields['spatial_series']]
+
+    def getTimeSeriesTimeStamps(self, timeSeries):
+        return [i.timestamps for i in self.container.spatial_series
+                if i.name == timeSeries][0]
 
 
 class FluorescenceAdapter(AbstractContainer):
@@ -37,11 +53,18 @@ class FluorescenceAdapter(AbstractContainer):
         fields = self.container.fields
         return [i.name for i in fields['roi_response_series']]
 
+    def getTimeSeriesTimeStamps(self, timeSeries):
+        return [i.timestamps for i in self.container.roi_response_series
+                if i.name == timeSeries][0]
+
 
 class ImageSegmentationAdapter(AbstractContainer):
     def getTimeSeries(self):
         fields = self.container.fields
         return [i.name for i in fields['plane_segmentations']]
+
+    def getTimeSeriesTimeStamps(self, timeSeries):
+        return None
 
 
 class MotionCorrectionAdapter(AbstractContainer):
@@ -49,11 +72,17 @@ class MotionCorrectionAdapter(AbstractContainer):
         fields = self.container.fields
         return [i.name for i in fields['corrected_image_stacks']]
 
+    def getTimeSeriesTimeStamps(self, timeSeries):
+        return self.container.corrected_image_stacks[0].corrected.timestamps
+
 
 class PupilTrackingAdapter(AbstractContainer):
     def getTimeSeries(self):
         fields = self.container.fields
         return [fields['time_series'].name]
+
+    def getTimeSeriesTimeStamps(self, timeSeries):
+        return self.container.time_series.timestamps.value
 
 
 def getTimeSeriesAdapter(pipeline, container):

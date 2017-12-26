@@ -54,3 +54,10 @@ class NwbSd(object):
         pipeline = self.nwb.get_processing_module(module)
         adapter = getTimeSeriesAdapter(pipeline, container)
         return adapter.getTimeSeries()
+
+    def getTimeSeriesTimeStamps(self, container, timeSeries):
+        """Returns a list of timestamps for a timeSeries"""
+        module = self._getProcessingModuleName()
+        pipeline = self.nwb.get_processing_module(module)
+        adapter = getTimeSeriesAdapter(pipeline, container)
+        return adapter.getTimeSeriesTimeStamps(timeSeries)
