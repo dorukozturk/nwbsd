@@ -5,7 +5,7 @@ import pytest
 import os
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def nwbSd():
     path = os.path.dirname(os.path.realpath(__file__))
     testFile = '570014520.nwb'
