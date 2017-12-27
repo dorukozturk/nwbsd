@@ -1,7 +1,7 @@
-import datetime
 import pynwb
 import numpy as np
 from .timeseries import getTimeSeriesAdapter
+from dateutil import parser
 
 
 class NwbSd(object):
@@ -24,9 +24,8 @@ class NwbSd(object):
 
     def getSessionStartTime(self):
         """Returns the session start time"""
-        fmt = '%b %d %H:%M:%S %Y'
-        nwbTime = self.nwb.session_start_time.strftime(fmt)
-        return datetime.datetime.strptime(nwbTime, fmt)
+        nwbTime = str(self.nwb.session_start_time)
+        return parser.parse(nwbTime)
 
     def getStimulusTimeStamps(self, stimulus):
         """Returns a list of timestamps for a stimulus"""
