@@ -2,3 +2,5 @@
 *.pyc
 *.cache
 *.nwb
+.tox
+*.egg-info
