@@ -5,16 +5,14 @@ import pytest
 import os
 
 
-@pytest.fixture(scope="module")
-def nwbSd():
-    path = os.path.dirname(os.path.realpath(__file__))
-    testFile = '570014520.nwb'
-    return NwbSd(os.path.join(path, testFile))
-
-
 def _compareLists(list1, list2):
     assert len(list1) == len(list2)
     assert sorted(list1) == sorted(list2)
+
+
+@pytest.fixture(scope="module")
+def nwbSd():
+    return NwbSd(os.path.join('tests', '570014520.nwb'))
 
 
 def test_nwbsd_constructor(nwbSd):
