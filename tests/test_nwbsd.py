@@ -61,9 +61,8 @@ def test_get_stimulus_timestamps(nwbSd, stimulus, length):
     ('spontaneous_stimulus', 2),
     ('static_gratings_stimulus', 6000)
 ])
-def test_get_stimulus_data_index(nwbSd, stimulus, length):
-    index = nwbSd._getStimulusDataIndex(stimulus)
-    assert len(index) == length
+def test_get_stimulus_data_length(nwbSd, stimulus, length):
+    assert len(nwbSd.nwb.get_stimulus(stimulus).data.value) == length
 
 
 @pytest.mark.parametrize('stimulus, index, shape', [

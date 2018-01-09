@@ -32,10 +32,6 @@ class NwbSd(object):
         stim = self.nwb.get_stimulus(stimulus)
         return stim.timestamps.value
 
-    def _getStimulusDataIndex(self, stimulus):
-        stim = self.nwb.get_stimulus(stimulus)
-        return stim.data.value
-
     def getStimulusData(self, stimulus, timeStamp):
         """Returns the stimulus data node for a given timestamp"""
         timeStamps = self.getStimulusTimeStamps(stimulus)
