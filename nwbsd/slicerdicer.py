@@ -2,6 +2,9 @@ import pynwb
 import numpy as np
 from .timeseries import getTimeSeriesAdapter
 from dateutil import parser
+import h5py
+import os
+from treelib import Tree
 
 
 class NwbSd(object):
@@ -9,6 +12,34 @@ class NwbSd(object):
     def __init__(self, nwbPath):
         legacy_map = pynwb.legacy.get_type_map()
         self.nwb = pynwb.NWBHDF5IO(nwbPath, extensions=legacy_map, mode='r').read()
+        self.hdf = h5py.File(nwbPath)
+        self._tree = None
+
+    @property
+    def tree(self):
+        """Returns the tree of the nwb file"""
+
+        module = 'processing'
+        group = self.hdf.get(module)
+        root = '/{}'.format(module)
+        tree = Tree()
+        tree.create_node(module, root, data='Group')
+
+        def _traverseTree(name, obj):
+            if isinstance(obj, h5py.Group):
+                type_ = 'Group'
+            elif isinstance(obj, h5py.Dataset):
+                type_ = 'Dataset'
+            tree.create_node(os.path.basename(name),
+                             os.path.join(root, name),
+                             parent=os.path.join(root, obj.parent.name),
+                             data=type_)
+
+        group.visititems(_traverseTree)
+        if not self._tree:
+            self._tree = tree
+
+        return tree
 
     def getStimuli(self):
         """Returns a list of all stimulus"""
