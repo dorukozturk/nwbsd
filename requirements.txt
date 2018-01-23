@@ -1,2 +1,3 @@
-pynwb
-python-dateutil
+pynwb==0.2.0
+python-dateutil==2.6.1
+treelib==1.5.1

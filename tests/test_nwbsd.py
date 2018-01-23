@@ -19,6 +19,18 @@ def test_nwbsd_constructor(nwbSd):
     assert isinstance(nwbSd.nwb, pynwb.file.NWBFile) is True
 
 
+def test_nwbsd_tree(nwbSd):
+    tree = nwbSd.tree.to_dict()
+    assert 'processing' in tree.keys()
+    assert 'brain_observatory_pipeline' in tree['processing']['children'][0]
+    pipeline = tree['processing']['children'][0]['brain_observatory_pipeline']
+    assert len(pipeline['children']) == 7
+    expected = ['BehavioralTimeSeries', 'DfOverF', 'EyeTracking',
+                'Fluorescence', 'ImageSegmentation', 'MotionCorrection',
+                'PupilTracking']
+    _compareLists(expected, [str(list(i.keys())[0]) for i in pipeline['children']])
+
+
 def test_stimulus_list(nwbSd):
     stimuli = nwbSd.getStimuli()
     expected = ['natural_movie_one_stimulus', 'natural_scenes_stimulus',
@@ -61,9 +73,8 @@ def test_get_stimulus_timestamps(nwbSd, stimulus, length):
     ('spontaneous_stimulus', 2),
     ('static_gratings_stimulus', 6000)
 ])
-def test_get_stimulus_data_index(nwbSd, stimulus, length):
-    index = nwbSd._getStimulusDataIndex(stimulus)
-    assert len(index) == length
+def test_get_stimulus_data_length(nwbSd, stimulus, length):
+    assert len(nwbSd.nwb.get_stimulus(stimulus).data.value) == length
 
 
 @pytest.mark.parametrize('stimulus, index, shape', [

@@ -6,6 +6,8 @@ setup(
     packages=['nwbsd'],
     license='Apache v2',
     install_requires=[
-        "pynwb"
+        'pynwb',
+	'treelib',
+	'python-dateutil'
     ]
 )
