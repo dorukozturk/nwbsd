@@ -1,5 +1,5 @@
 import datetime
-from nwbsd.slicerdicer import NwbSd
+from nwbsd import NwbSd
 import pynwb
 import pytest
 import os
