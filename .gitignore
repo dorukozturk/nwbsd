@@ -4,3 +4,4 @@
 *.nwb
 .tox
 *.egg-info
+.coverage
