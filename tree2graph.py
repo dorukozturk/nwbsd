@@ -33,8 +33,8 @@ def main():
     walk(tree, None, nodes, links, 0)
 
     # Create a table of nodes and links suitable for WebCola.
-    nodes = list(nodes)
-    index = {n: i for i, n in enumerate(nodes)}
+    nodes = list(map(lambda x: {'name': x}, nodes))
+    index = {n['name']: i for i, n in enumerate(nodes)}
 
     links = [{'source': index[s], 'target': index[t]} for s, t in links]
 
