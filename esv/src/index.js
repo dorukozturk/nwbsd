@@ -17,7 +17,7 @@ observeStore(next => {
 
   const el = select('#graph').node();
   makeGraph(el, {
-    width: el.clientWidth,
+    width: window.innerWidth,
     height: window.innerHeight,
     nodes: graph.get('nodes'),
     links: graph.get('links')

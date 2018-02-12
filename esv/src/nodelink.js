@@ -22,28 +22,28 @@ function computePath (s, t) {
 }
 
 export function makeGraph (el, options) {
+  // Set up some options.
+  const pad = 4;
   const width = options.width || 960;
   const height = options.height || 540;
   const nodes = options.nodes;
   const links = options.links;
 
-  select(el)
-    .selectAll('*')
-    .remove();
-
+  // Grab the SVG element.
   const svg = select(el)
-    .append('svg')
     .attr('width', width)
-    .attr('height', height)
-    .append('g');
+    .attr('height', height);
 
-  const cola = d3adaptor(d3)
-    .linkDistance(100)
-    .avoidOverlaps(true)
-    .flowLayout('y', 150)
-    .size([width, height]);
+  // Empty the sub-containers.
+  ['.nodes', '.links', '.labels'].forEach(s => {
+    svg.select(s)
+      .selectAll('*')
+      .remove();
+  });
 
-  let link = svg.selectAll('.link')
+  // Set up the links.
+  let link = svg.select('.links')
+    .selectAll('.link')
     .data(links);
   link = link.enter()
     .append('path')
@@ -51,11 +51,27 @@ export function makeGraph (el, options) {
     .style('fill', '#333')
     .merge(link);
 
-  const rectWidth = 100;
-  const rectHeight = 50;
-  const pad = 5;
+  // Set up the labels.
+  let label = svg.select('.labels')
+    .selectAll('.label')
+    .data(nodes);
+  label = label.enter()
+    .append('text')
+    .classed('label', true)
+    .text(d => d.name)
+    .merge(label);
 
-  let node = svg.selectAll('.node')
+  // Update the virtual bounding box of the nodes by setting width and height
+  // values (will be used by WebCola to perform overlap avoidance).
+  label.each(function (d) {
+    const box = this.getBBox();
+    d.width = box.width + 2 * pad;
+    d.height = box.height + 2 * pad;
+  });
+
+  // Set up the nodes.
+  let node = svg.select('.nodes')
+    .selectAll('.node')
     .data(nodes);
   node = node.enter()
     .append('rect')
@@ -63,43 +79,37 @@ export function makeGraph (el, options) {
     .style('stroke', 'black')
     .style('stroke-width', '1.5px')
     .style('cursor', 'move')
-    .attr('width', rectWidth - 2 * pad)
-    .attr('height', rectHeight - 2 * pad)
+    .attr('width', d => d.width)
+    .attr('height', d => d.height)
     .attr('rx', 5)
     .attr('ry', 5)
     .style('fill', 'firebrick')
-    .call(cola.drag)
     .merge(node);
 
-  nodes.forEach(n => {
-    n.height = rectHeight;
-    n.width = rectWidth;
-  });
+  // Create the cola object.
+  const cola = d3adaptor(d3)
+    .linkDistance(100)
+    .avoidOverlaps(true)
+    .flowLayout('y', 50)
+    .size([width, height]);
 
-  let label = svg.selectAll('.label')
-    .data(nodes);
-  label = label.enter()
-    .append('text')
-    .classed('label', true)
-    .text(d => d.name)
-    .call(cola.drag)
-    .merge(label);
+  // Make the nodes and labels draggable.
+  node.call(cola.drag);
+  label.call(cola.drag);
 
+  // Launch the layout engine.
   cola.nodes(nodes)
     .links(links)
     .start(10, 20, 20);
 
+  // Place elements where they should be as things are dragged around, etc.
   cola.on('tick', () => {
     link.attr('d', d => computePath(d.source, d.target));
 
-    node.attr('x', d => d.x - rectWidth / 2 + pad)
-      .attr('y', d => d.y - rectHeight / 2 + pad);
+    node.attr('x', d => d.x - d.width / 2)
+      .attr('y', d => d.y - d.height / 2);
 
-    label.attr('x', function (d) {
-      return d.x - this.getBBox().width / 2;
-    })
-      .attr('y', function (d) {
-        return d.y + this.getBBox().height / 4;
-      });
+    label.attr('x', d => d.x - d.width / 2 + pad)
+      .attr('y', d => d.y + d.height / 4 - pad);
   });
 }
