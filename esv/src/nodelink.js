@@ -40,6 +40,7 @@ export function makeGraph (el, options) {
   const cola = d3adaptor(d3)
     .linkDistance(100)
     .avoidOverlaps(true)
+    .flowLayout('y', 150)
     .size([width, height]);
 
   let link = svg.selectAll('.link')
