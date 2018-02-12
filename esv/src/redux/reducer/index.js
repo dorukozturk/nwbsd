@@ -3,7 +3,10 @@ import Immutable from 'immutable';
 import { actionType } from '../action';
 
 const initial = Immutable.fromJS({
-  mode: 0
+  graph: {
+    nodes: null,
+    links: null
+  }
 });
 
 const reducer = (state = initial, action = {}) => {
@@ -14,12 +17,9 @@ const reducer = (state = initial, action = {}) => {
   }
 
   switch (action.type) {
-    case actionType.initial:
-      newState = state.set('mode', 1);
-      break;
-
-    case actionType.secondary:
-      newState = state.set('mode', 2);
+    case actionType.setGraphData:
+      newState = state.setIn(['graph', 'nodes'], action.nodes)
+        .setIn(['graph', 'links'], action.links);
       break;
   }
 

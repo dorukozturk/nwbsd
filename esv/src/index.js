@@ -2,15 +2,10 @@ import { action,
          store,
          observeStore } from './redux';
 
-console.log('hello');
+import graph from '../../graph.json';
+
+store.dispatch(action.setGraphData(graph.nodes, graph.links));
 
 observeStore(next => {
-  const mode = next.get('mode');
-  console.log(`mode changed to ${mode}`);
-}, s => s.get('mode'));
-
-store.dispatch(action.initial('hello'));
-
-window.setTimeout(() => {
-  store.dispatch(action.secondary());
-}, 2000);
+  const graph = next.get('graph');
+}, s => s.get('graph'));
