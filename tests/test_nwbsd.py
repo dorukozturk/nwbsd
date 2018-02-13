@@ -1,6 +1,7 @@
 import datetime
 from nwbsd import NwbSd
 import pynwb
+import numpy as np
 import pytest
 import os
 
@@ -63,30 +64,31 @@ def test_session_start_time(nwbSd):
     ('static_gratings_stimulus', 6000)
 ])
 def test_get_stimulus_timestamps(nwbSd, stimulus, length):
-    timeStamp = nwbSd.getStimulusTimeStamps(stimulus)
+    timeStamp = nwbSd.getStimulus(stimulus).getTimeStamps()
     assert len(timeStamp) == length
 
 
-@pytest.mark.parametrize('stimulus, length', [
-    ('natural_movie_one_stimulus', 9000),
-    ('natural_scenes_stimulus', 5950),
-    ('spontaneous_stimulus', 2),
-    ('static_gratings_stimulus', 6000)
+@pytest.mark.parametrize('stimulus, timeStamp, data', [
+    ('natural_movie_one_stimulus', 2400, 125.8),
+    ('natural_scenes_stimulus', 1000, 126.09),
+    ('spontaneous_stimulus', 1030, 1),
+    ('static_gratings_stimulus', 1500, 10.22)
 ])
-def test_get_stimulus_data_length(nwbSd, stimulus, length):
-    assert len(nwbSd.nwb.get_stimulus(stimulus).data.value) == length
+def test_get_stimulus_data(nwbSd, stimulus, timeStamp, data):
+    stimulus = nwbSd.getStimulus(stimulus)
+    meanData = np.mean(stimulus.getDataForTimeStamp(timeStamp))
+    assert data == pytest.approx(meanData, 0.01)
 
 
-@pytest.mark.parametrize('stimulus, index, shape', [
-    ('natural_movie_one_stimulus', 3000, (1, 304, 608)),
-    ('natural_scenes_stimulus', 2000, (1, 918, 1174)),
-    ('spontaneous_stimulus', 1, (1,)),
-    ('static_gratings_stimulus', 2500, (1, 3))
+@pytest.mark.parametrize('stimulus, timeStamp, index', [
+    ('natural_movie_one_stimulus', 2547, 6013),
+    ('natural_scenes_stimulus', 552, 28),
+    ('spontaneous_stimulus', 1030, 0),
+    ('static_gratings_stimulus', 2113, 3027)
 ])
-def test_get_stimulus_data_shape(nwbSd, stimulus, index, shape):
-    timeStamp = nwbSd.getStimulusTimeStamps(stimulus)[index]
-    data = nwbSd.getStimulusData(stimulus, timeStamp)
-    assert data.shape == shape
+def test_get_closest_timestamp_index(nwbSd, stimulus, timeStamp, index):
+    closestIndex = nwbSd.getStimulus(stimulus)._getClosestTimeStampIndex(timeStamp)
+    assert closestIndex == index
 
 
 @pytest.mark.parametrize('container, timeSeries', [
