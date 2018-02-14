@@ -58,6 +58,7 @@ export function makeGraph (el, options) {
   label = label.enter()
     .append('text')
     .classed('label', true)
+    .style('cursor', 'move')
     .text(d => d.name)
     .merge(label);
 
@@ -83,7 +84,7 @@ export function makeGraph (el, options) {
     .attr('height', d => d.height)
     .attr('rx', 5)
     .attr('ry', 5)
-    .style('fill', 'firebrick')
+    .style('fill', '#aaa')
     .merge(node);
 
   // Create the cola object.
