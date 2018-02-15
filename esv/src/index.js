@@ -3,7 +3,7 @@ import { select } from 'd3-selection';
 import { action,
          store,
          observeStore } from './redux';
-import graph from '../../graph.json';
+import graph from '../graph.json';
 import mainpage from './index.pug';
 
 import { makeGraph } from './nodelink';

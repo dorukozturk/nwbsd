@@ -1,7 +1,7 @@
 import functools
 import json
 from nwbsd.slicerdicer import NwbSd
-import os.path
+import sys
 
 
 def normalize(t):
@@ -35,8 +35,15 @@ def unleaf(tt):
 
     return {k: list(map(unleaf_helper, v)) for k, v in tt.items()}
 
+# Grab filename from commandline.
+if len(sys.argv) < 2:
+    print('usage: dumptree.py <nwbfile>', file=sys.stderr)
+    sys.exit(1)
+
+inputfile = sys.argv[1]
+
 # Load the data and extract the tree view.
-data = NwbSd(os.path.join('tests', '570014520.nwb'))
+data = NwbSd(inputfile)
 tree = data.tree.to_dict()
 
 sample = {
