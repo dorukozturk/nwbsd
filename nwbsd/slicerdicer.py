@@ -19,11 +19,9 @@ class NwbSd(object):
     def tree(self):
         """Returns the tree of the nwb file"""
 
-        module = 'processing'
-        group = self.hdf.get(module)
-        root = '/{}'.format(module)
+        root = '/'
         tree = Tree()
-        tree.create_node(module, root, data='Group')
+        tree.create_node(root, root, data='Group')
 
         def _traverseTree(name, obj):
             if isinstance(obj, h5py.Group):
@@ -35,7 +33,7 @@ class NwbSd(object):
                              parent=os.path.join(root, obj.parent.name),
                              data=type_)
 
-        group.visititems(_traverseTree)
+        self.hdf.visititems(_traverseTree)
         if not self._tree:
             self._tree = tree
 
