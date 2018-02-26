@@ -30,8 +30,8 @@ export class Graph {
     this.width = options.width || 960;
     this.height = options.height || 540;
     this.maxdepth = options.maxdepth;
-    this.nodes = options.nodes;
-    this.links = options.links;
+    this.nodes = [...options.nodes];
+    this.links = [...options.links];
 
     // Grab the SVG element.
     this.svg = select(el)
