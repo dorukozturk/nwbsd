@@ -6,7 +6,7 @@ import { action,
 import graph from '../graph.json';
 import mainpage from './index.pug';
 
-import { makeGraph } from './nodelink';
+import { Graph } from './nodelink';
 
 document.write(mainpage());
 
@@ -16,7 +16,7 @@ observeStore(next => {
   const graph = next.get('graph');
 
   const el = select('#graph').node();
-  makeGraph(el, {
+  new Graph(el, {
     width: window.innerWidth,
     height: window.innerHeight,
     maxdepth: Math.max(...graph.get('nodes').map(x => x.depth)),
