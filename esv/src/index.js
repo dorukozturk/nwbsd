@@ -19,6 +19,7 @@ observeStore(next => {
   makeGraph(el, {
     width: window.innerWidth,
     height: window.innerHeight,
+    maxdepth: Math.max(...graph.get('nodes').map(x => x.depth)),
     nodes: graph.get('nodes'),
     links: graph.get('links')
   });

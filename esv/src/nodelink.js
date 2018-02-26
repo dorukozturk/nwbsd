@@ -1,5 +1,7 @@
 import * as d3 from 'd3';
 import { select } from 'd3-selection';
+import { scaleSequential } from 'd3-scale';
+import { interpolateGreens } from 'd3-scale-chromatic';
 import { d3adaptor } from 'webcola';
 
 function distance (a, b) {
@@ -26,6 +28,7 @@ export function makeGraph (el, options) {
   const pad = 4;
   const width = options.width || 960;
   const height = options.height || 540;
+  const maxdepth = options.maxdepth;
   const nodes = options.nodes;
   const links = options.links;
 
@@ -74,6 +77,7 @@ export function makeGraph (el, options) {
   let node = svg.select('.nodes')
     .selectAll('.node')
     .data(nodes);
+  let depthmap = scaleSequential(interpolateGreens);
   node = node.enter()
     .append('rect')
     .classed('node', true)
@@ -84,7 +88,7 @@ export function makeGraph (el, options) {
     .attr('height', d => d.height)
     .attr('rx', 5)
     .attr('ry', 5)
-    .style('fill', '#aaa')
+    .style('fill', d => depthmap(d.depth / maxdepth))
     .merge(node);
 
   // Create the cola object.
