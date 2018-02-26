@@ -7,7 +7,13 @@
     "build": "webpack",
     "watch": "webpack -w",
     "serve": "http-serve build",
+    "lint": "semistandard | snazzy",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "semistandard": {
+    "ignore": [
+      "build"
+    ]
   },
   "author": "",
   "license": "Apache-2.0",
@@ -28,6 +34,8 @@
     "redux-logger": "^3.0.6",
     "redux-promise": "^0.5.3",
     "redux-thunk": "^2.2.0",
+    "semistandard": "^12.0.1",
+    "snazzy": "^7.0.0",
     "style-loader": "^0.20.1",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.1",
