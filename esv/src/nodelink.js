@@ -26,29 +26,36 @@ function computePath (s, t) {
 export class Graph {
   constructor (el, options) {
     // Set up some options.
-    const pad = 4;
-    const width = options.width || 960;
-    const height = options.height || 540;
-    const maxdepth = options.maxdepth;
-    const nodes = options.nodes;
-    const links = options.links;
+    this.pad = 4;
+    this.width = options.width || 960;
+    this.height = options.height || 540;
+    this.maxdepth = options.maxdepth;
+    this.nodes = options.nodes;
+    this.links = options.links;
 
     // Grab the SVG element.
-    const svg = select(el)
-      .attr('width', width)
-      .attr('height', height);
+    this.svg = select(el)
+      .attr('width', this.width)
+      .attr('height', this.height);
 
+    this.empty();
+    this.update();
+  }
+
+  empty () {
     // Empty the sub-containers.
     ['.nodes', '.links', '.labels'].forEach(s => {
-      svg.select(s)
+      this.svg.select(s)
         .selectAll('*')
         .remove();
     });
+  }
 
+  update () {
     // Set up the links.
-    let link = svg.select('.links')
+    let link = this.svg.select('.links')
       .selectAll('.link')
-      .data(links);
+      .data(this.links);
     link = link.enter()
       .append('path')
       .classed('link', true)
@@ -56,9 +63,9 @@ export class Graph {
       .merge(link);
 
     // Set up the labels.
-    let label = svg.select('.labels')
+    let label = this.svg.select('.labels')
       .selectAll('.label')
-      .data(nodes);
+      .data(this.nodes);
     label = label.enter()
       .append('text')
       .classed('label', true)
@@ -68,6 +75,7 @@ export class Graph {
 
     // Update the virtual bounding box of the nodes by setting width and height
     // values (will be used by WebCola to perform overlap avoidance).
+    const pad = this.pad
     label.each(function (d) {
       const box = this.getBBox();
       d.width = box.width + 2 * pad;
@@ -75,9 +83,9 @@ export class Graph {
     });
 
     // Set up the nodes.
-    let node = svg.select('.nodes')
+    let node = this.svg.select('.nodes')
       .selectAll('.node')
-      .data(nodes);
+      .data(this.nodes);
     let depthmap = scaleSequential(interpolateGreens);
     node = node.enter()
       .append('rect')
@@ -89,7 +97,7 @@ export class Graph {
       .attr('height', d => d.height)
       .attr('rx', 5)
       .attr('ry', 5)
-      .style('fill', d => depthmap(d.depth / maxdepth))
+      .style('fill', d => depthmap(d.depth / this.maxdepth))
       .merge(node);
 
     // Create the cola object.
@@ -97,15 +105,15 @@ export class Graph {
       .linkDistance(100)
       .avoidOverlaps(true)
       .flowLayout('y', 50)
-      .size([width, height]);
+      .size([this.width, this.height]);
 
     // Make the nodes and labels draggable.
     node.call(cola.drag);
     label.call(cola.drag);
 
     // Launch the layout engine.
-    cola.nodes(nodes)
-      .links(links)
+    cola.nodes(this.nodes)
+      .links(this.links)
       .start(10, 20, 20);
 
     // Place elements where they should be as things are dragged around, etc.
@@ -115,8 +123,8 @@ export class Graph {
       node.attr('x', d => d.x - d.width / 2)
         .attr('y', d => d.y - d.height / 2);
 
-      label.attr('x', d => d.x - d.width / 2 + pad)
-        .attr('y', d => d.y + d.height / 4 - pad);
+      label.attr('x', d => d.x - d.width / 2 + this.pad)
+        .attr('y', d => d.y + d.height / 4 - this.pad);
     });
   }
 }
