@@ -46,36 +46,9 @@ inputfile = sys.argv[1]
 data = NwbSd(inputfile)
 tree = data.tree.to_dict()
 
-sample = {
-    'a': {
-        'children': [
-            {
-                'b': {
-                    'children': ['c', 'd', 'e']
-                },
-            },
-            {
-                'f': {
-                    'children': [
-                        {
-                            'h': {'children': ['g']}
-                        },
-                        {
-                            'k': {'children': ['i']}
-                        }
-                    ]
-                }
-            }
-        ]
-    }
-}
-
 # Normalize the tree into something more easily traversable.
 tree_norm = normalize(tree)
 tree_flat = unleaf(tree_norm)
-
-sample_norm = normalize(sample)
-sample_flat = unleaf(sample_norm)
 
 # Dump the normalized tree out as JSON.
 print(json.dumps(tree_flat, indent=2))
