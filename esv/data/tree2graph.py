@@ -7,9 +7,10 @@ def walk(t, label, nodes, links, level):
         key = list(t.keys())[0]
         val = t[key]
 
-        nodes.add(key)
-        if label:
-            links.add((label, key))
+        if not key.startswith('roi'):
+            nodes.add(key)
+            if label and not label.startswith('roi'):
+                links.add((label, key))
 
         walk(val, key, nodes, links, level+1)
     elif type(t) == list:
@@ -17,8 +18,10 @@ def walk(t, label, nodes, links, level):
             walk(x, label, nodes, links, level+1)
 
     elif type(t) == str:
-        nodes.add(t)
-        links.add((label, t))
+        if not t.startswith('roi'):
+            nodes.add(t)
+            if not label.startswith('roi'):
+                links.add((label, t))
     else:
         raise RuntimeError
 
