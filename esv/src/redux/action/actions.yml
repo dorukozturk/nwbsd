@@ -1,3 +1,17 @@
 setGraphData:
   - nodes
   - links
+
+createGraph:
+  - el
+  - width
+  - height
+  - maxdepth
+
+updateGraph: []
+
+toggleHide:
+  - index
+
+savePositions:
+  - data

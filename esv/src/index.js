@@ -6,21 +6,20 @@ import { action,
 import graph from '../graph.json';
 import mainpage from './index.pug';
 
-import { Graph } from './nodelink';
-
 document.write(mainpage());
 
 store.dispatch(action.setGraphData(graph.nodes, graph.links));
 
 observeStore(next => {
-  const graph = next.get('graph');
+  const graph = next.get('graph').toJS();
+  const nodelink = next.get('nodelink');
 
-  const el = select('#graph').node();
-  new Graph(el, {
-    width: window.innerWidth,
-    height: window.innerHeight,
-    maxdepth: Math.max(...graph.get('nodes').map(x => x.depth)),
-    nodes: graph.get('nodes'),
-    links: graph.get('links')
-  });
+  if (!nodelink) {
+    const el = select('#graph').node();
+    const depths = graph.nodes.map(x => x.depth);
+    const maxdepth = Math.max(...graph.nodes.map(x => x.depth));
+    window.setTimeout(() => store.dispatch(action.createGraph(el, window.innerWidth, window.innerHeight, maxdepth)), 0);
+  } else {
+    window.setTimeout(() => store.dispatch(action.updateGraph()), 0);
+  }
 }, s => s.get('graph'));
