@@ -57,7 +57,9 @@ export class Graph {
     // Subscribe to changes in the graph data.
     observeStore(next => {
       const graph = next.get('graph').toJS();
-      this.update(graph.nodes, graph.links);
+      window.setTimeout(() => {
+        this.update(graph.nodes, graph.links);
+      }, 0);
     }, s => s.get('graph'));
   }
 
