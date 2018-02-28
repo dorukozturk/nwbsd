@@ -5,8 +5,7 @@ import { actionType } from '../action';
 import { Graph } from '../../nodelink';
 
 const initial = Immutable.fromJS({
-  graph: null,
-  nodelink: null
+  graph: null
 });
 
 const reducer = (state = initial, action = {}) => {
@@ -22,27 +21,6 @@ const reducer = (state = initial, action = {}) => {
         nodes: action.nodes,
         links: action.links
       }));
-      break;
-
-    case actionType.createGraph:
-      const data = state.get('graph').toJS();
-      const nodelink = new Graph(action.el, {
-        width: action.width,
-        height: action.height,
-        maxdepth: action.maxdepth,
-        nodes: data.nodes,
-        links: data.links
-      });
-
-      newState = state.set('nodelink', nodelink);
-      break;
-
-    case actionType.updateGraph:
-      {
-        const nodelink = state.get('nodelink');
-        const data = state.get('graph').toJS();
-        nodelink.update(data.nodes, data.links);
-      }
       break;
 
     case actionType.toggleHide:

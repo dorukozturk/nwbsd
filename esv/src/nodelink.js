@@ -6,7 +6,9 @@ import { transition } from 'd3-transition';
 import { easeLinear } from 'd3-ease';
 import { d3adaptor } from 'webcola';
 
-import { store, action } from './redux';
+import { action,
+         store,
+         observeStore } from './redux';
 
 function distance (a, b) {
   const d = {
@@ -49,9 +51,14 @@ export class Graph {
     this.user = 20;
     this.all = 20;
 
-    // Empty the container and bootstrap the layout.
+    // Empty the container.
     this.empty();
-    this.update(options.nodes, options.links);
+
+    // Subscribe to changes in the graph data.
+    observeStore(next => {
+      const graph = next.get('graph').toJS();
+      this.update(graph.nodes, graph.links);
+    }, s => s.get('graph'));
   }
 
   filterHidden (nodes, links) {
