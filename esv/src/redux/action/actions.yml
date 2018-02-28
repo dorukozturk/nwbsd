@@ -7,3 +7,7 @@ toggleHide:
 
 savePositions:
   - data
+
+resizeWindow:
+  - width
+  - height

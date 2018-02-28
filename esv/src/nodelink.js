@@ -32,6 +32,7 @@ function computePath (s, t) {
 export class Graph {
   constructor (el, options) {
     // Set up some options.
+    this.el = el;
     this.pad = 4;
     this.width = options.width || 960;
     this.height = options.height || 540;
@@ -61,6 +62,19 @@ export class Graph {
         this.update(graph.nodes, graph.links);
       }, 0);
     }, s => s.get('graph'));
+
+    // Subscribe to changes in the window size.
+    observeStore(next => {
+      const size = next.get('size').toJS();
+      window.setTimeout(() => {
+        this.cola.size([size.width, size.height])
+          .start();
+
+        select(this.el)
+          .attr('width', size.width)
+          .attr('height', size.height);
+      }, 0);
+    }, s => s.get('size'));
   }
 
   filterHidden (nodes, links) {

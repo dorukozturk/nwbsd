@@ -5,7 +5,11 @@ import { actionType } from '../action';
 import { Graph } from '../../nodelink';
 
 const initial = Immutable.fromJS({
-  graph: null
+  graph: null,
+  size: {
+    width: null,
+    height: null
+  }
 });
 
 const reducer = (state = initial, action = {}) => {
@@ -38,6 +42,13 @@ const reducer = (state = initial, action = {}) => {
           s = s.updateIn(['graph', 'nodes', table[d.name], 'x'], val => d.x)
             .updateIn(['graph', 'nodes', table[d.name], 'y'], val => d.y);
         });
+      });
+      break;
+
+    case actionType.resizeWindow:
+      newState = state.withMutations(s => {
+        s.setIn(['size', 'width'], action.width)
+          .setIn(['size', 'height'], action.height);
       });
       break;
   }
