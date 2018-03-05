@@ -29,7 +29,7 @@ class NwbSd(object):
             if not tree.contains(item.name):
                 link = item.parent.get(item.name, getlink=True)
                 data = {'hdf_type': item.__class__.__name__,
-                        'id': item.id.id,
+                        'path': item.name,
                         link.__class__.__name__: link.path}
                 tree.create_node(os.path.basename(item.name),
                                  os.path.join(root, item.name),
@@ -49,7 +49,7 @@ class NwbSd(object):
             # a strict signature for the visititems method.
 
             data = {'hdf_type': obj.__class__.__name__,
-                    'id': obj.id.id}
+                    'path': obj.name}
             tree.create_node(os.path.basename(obj.name),
                              os.path.join(root, name),
                              parent=os.path.join(root, obj.parent.name),
