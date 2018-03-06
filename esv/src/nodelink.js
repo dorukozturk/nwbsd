@@ -63,10 +63,25 @@ export class Graph {
       scopes: 'rect.node',
       onItem: (node, evt) => {
         const data = select(node.get(0)).datum();
-        const action = select(evt.target).text();
+        const menuItem = select(evt.target).text();
 
-        console.log('data', data);
-        console.log('action', action);
+        switch (menuItem) {
+          case 'Hide this node':
+            {
+              store.dispatch(action.toggleHide(data.index));
+
+              const node = this.svg.select('.nodes')
+                .selectAll('.node');
+
+              store.dispatch(action.savePositions(node.data()));
+            }
+            break;
+
+          default:
+            console.log('data', data);
+            console.log('action', action);
+        }
+
       }
     });
 
@@ -153,10 +168,6 @@ export class Graph {
       .append('text')
       .classed('card', true)
       .text(d => d.name)
-      .on('dblclick', (d, i) => {
-        store.dispatch(action.toggleHide(i));
-        store.dispatch(action.savePositions(node.data()));
-      })
       .call(this.cola.drag)
       .merge(card);
 
