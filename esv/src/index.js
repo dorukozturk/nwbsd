@@ -1,3 +1,5 @@
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap/dist/js/bootstrap.js';
 import { select } from 'd3-selection';
 import debounce from 'lodash.debounce';
 

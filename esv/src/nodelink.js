@@ -1,9 +1,11 @@
+import 'bootstrap-contextmenu/bootstrap-contextmenu';
 import * as d3 from 'd3';
 import { select } from 'd3-selection';
 import { scaleSequential } from 'd3-scale';
 import { interpolateGreens } from 'd3-scale-chromatic';
 import { transition } from 'd3-transition';
 import { easeLinear } from 'd3-ease';
+import $ from 'jquery';
 import { d3adaptor } from 'webcola';
 
 import { action,
@@ -54,6 +56,19 @@ export class Graph {
 
     // Empty the container.
     this.empty();
+
+    // Install context menus.
+    $('#graph').contextmenu({
+      target: '#contextmenu',
+      scopes: 'text.label',
+      onItem: (node, evt) => {
+        const data = select(node.get(0)).datum();
+        const action = select(evt.target).text();
+
+        console.log('data', data);
+        console.log('action', action);
+      }
+    });
 
     // Subscribe to changes in the graph data.
     observeStore(next => {

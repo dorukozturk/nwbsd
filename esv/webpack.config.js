@@ -1,6 +1,7 @@
 var path = require('path');
 
 var HtmlPlugin = require('html-webpack-plugin');
+var webpack = require('webpack');
 
 module.exports = {
   devtool: 'cheap-module-eval-source-map',
@@ -41,6 +42,17 @@ module.exports = {
         ]
       },
       {
+        test: /\.css$/,
+        use: [
+          'style-loader',
+          'css-loader'
+        ]
+      },
+      {
+        test: /\.woff($|\?)|\.woff2($|\?)|\.ttf($|\?)|\.eot($|\?)|\.svg($|\?)/,
+        use: 'url-loader'
+      },
+      {
         test: /\.styl$/,
         exclude: /node_modules/,
         use: [
@@ -58,6 +70,10 @@ module.exports = {
       chunks: [
         'index'
       ]
+    }),
+
+    new webpack.ProvidePlugin({
+      jQuery: 'jquery'
     })
   ]
 };
