@@ -9,6 +9,7 @@ import { action,
 import { Graph } from './nodelink';
 import graph from '../graph.json';
 import mainpage from './index.pug';
+import './index.styl';
 
 document.write(mainpage());
 
