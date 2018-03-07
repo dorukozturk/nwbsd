@@ -41,6 +41,17 @@ module.exports = {
         ]
       },
       {
+        test: /\.css$/,
+        use: [
+          'style-loader',
+          'css-loader'
+        ]
+      },
+      {
+        test: /\.woff($|\?)|\.woff2($|\?)|\.ttf($|\?)|\.eot($|\?)|\.svg($|\?)/,
+        use: 'url-loader'
+      },
+      {
         test: /\.styl$/,
         exclude: /node_modules/,
         use: [

@@ -1,4 +1,6 @@
 import * as d3 from 'd3';
+import contextMenu from 'd3-context-menu';
+import 'd3-context-menu/css/d3-context-menu.css';
 import { select } from 'd3-selection';
 import { scaleSequential } from 'd3-scale';
 import { interpolateGreens } from 'd3-scale-chromatic';
@@ -100,7 +102,7 @@ export class Graph {
 
   empty () {
     // Empty the sub-containers.
-    ['.nodes', '.links', '.labels'].forEach(s => {
+    ['.nodes', '.links', '.cards'].forEach(s => {
       this.svg.select(s)
         .selectAll('*')
         .remove();
@@ -124,33 +126,27 @@ export class Graph {
     link = link.enter()
       .append('path')
       .classed('link', true)
-      .style('fill', '#333')
       .merge(link);
 
     // Set up the labels.
-    let label = this.svg.select('.labels')
-      .selectAll('.label')
+    let card = this.svg.select('.cards')
+      .selectAll('.card')
       .data(nodes, d => d.name);
-    label.exit()
+    card.exit()
       .transition(t)
       .style('opacity', 0)
       .remove();
-    label = label.enter()
+    card = card.enter()
       .append('text')
-      .classed('label', true)
-      .style('cursor', 'move')
+      .classed('card', true)
       .text(d => d.name)
-      .on('dblclick', (d, i) => {
-        store.dispatch(action.toggleHide(i));
-        store.dispatch(action.savePositions(node.data()));
-      })
       .call(this.cola.drag)
-      .merge(label);
+      .merge(card);
 
     // Update the virtual bounding box of the nodes by setting width and height
     // values (will be used by WebCola to perform overlap avoidance).
     const pad = this.pad
-    label.each(function (d) {
+    card.each(function (d) {
       const box = this.getBBox();
       d.width = box.width + 2 * pad;
       d.height = box.height + 2 * pad;
@@ -168,15 +164,21 @@ export class Graph {
     node = node.enter()
       .append('rect')
       .classed('node', true)
-      .style('stroke', 'black')
-      .style('stroke-width', '1.5px')
-      .style('cursor', 'move')
       .attr('width', d => d.width)
       .attr('height', d => d.height)
       .attr('rx', 5)
       .attr('ry', 5)
       .style('fill', d => depthmap(d.depth / this.maxdepth))
       .call(this.cola.drag)
+      .on('contextmenu', contextMenu([
+        {
+          title: 'Hide this node',
+          action: (d, i) => {
+            store.dispatch(action.toggleHide(i));
+            store.dispatch(action.savePositions(node.data()));
+          }
+        }
+      ]))
       .merge(node);
 
     // Launch the layout engine.
@@ -199,7 +201,7 @@ export class Graph {
       node.attr('x', d => d.x - d.width / 2)
         .attr('y', d => d.y - d.height / 2);
 
-      label.attr('x', d => d.x - d.width / 2 + this.pad)
+      card.attr('x', d => d.x - d.width / 2 + this.pad)
         .attr('y', d => d.y + d.height / 4 - this.pad);
     });
   }
