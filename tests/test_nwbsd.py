@@ -21,14 +21,10 @@ def test_nwbsd_constructor(nwbSd):
 
 def test_nwbsd_tree(nwbSd):
     tree = nwbSd.tree.to_dict()
-    assert 'processing' in tree.keys()
-    assert 'brain_observatory_pipeline' in tree['processing']['children'][0]
-    pipeline = tree['processing']['children'][0]['brain_observatory_pipeline']
-    assert len(pipeline['children']) == 7
-    expected = ['BehavioralTimeSeries', 'DfOverF', 'EyeTracking',
-                'Fluorescence', 'ImageSegmentation', 'MotionCorrection',
-                'PupilTracking']
-    _compareLists(expected, [str(list(i.keys())[0]) for i in pipeline['children']])
+    modules = [i for i in tree['/']['children'] if not isinstance(i, dict)]
+    expected = ['analysis', 'epochs', 'file_create_date', 'identifier',
+                'nwb_version', 'session_description', 'session_start_time']
+    _compareLists(modules, expected)
 
 
 def test_stimulus_list(nwbSd):

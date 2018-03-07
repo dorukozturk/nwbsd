@@ -1,0 +1,13 @@
+setGraphData:
+  - nodes
+  - links
+
+toggleHide:
+  - index
+
+savePositions:
+  - data
+
+resizeWindow:
+  - width
+  - height
