@@ -1,11 +1,11 @@
-import 'bootstrap-contextmenu/bootstrap-contextmenu';
 import * as d3 from 'd3';
+import contextMenu from 'd3-context-menu';
+import 'd3-context-menu/css/d3-context-menu.css';
 import { select } from 'd3-selection';
 import { scaleSequential } from 'd3-scale';
 import { interpolateGreens } from 'd3-scale-chromatic';
 import { transition } from 'd3-transition';
 import { easeLinear } from 'd3-ease';
-import $ from 'jquery';
 import { d3adaptor } from 'webcola';
 
 import { action,
@@ -56,34 +56,6 @@ export class Graph {
 
     // Empty the container.
     this.empty();
-
-    // Install context menus.
-    $('#graph').contextmenu({
-      target: '#contextmenu',
-      scopes: 'rect.node',
-      onItem: (node, evt) => {
-        const data = select(node.get(0)).datum();
-        const menuItem = select(evt.target).text();
-
-        switch (menuItem) {
-          case 'Hide this node':
-            {
-              store.dispatch(action.toggleHide(data.index));
-
-              const node = this.svg.select('.nodes')
-                .selectAll('.node');
-
-              store.dispatch(action.savePositions(node.data()));
-            }
-            break;
-
-          default:
-            console.log('data', data);
-            console.log('action', action);
-        }
-
-      }
-    });
 
     // Subscribe to changes in the graph data.
     observeStore(next => {
@@ -198,6 +170,15 @@ export class Graph {
       .attr('ry', 5)
       .style('fill', d => depthmap(d.depth / this.maxdepth))
       .call(this.cola.drag)
+      .on('contextmenu', contextMenu([
+        {
+          title: 'Hide this node',
+          action: (d, i) => {
+            store.dispatch(action.toggleHide(i));
+            store.dispatch(action.savePositions(node.data()));
+          }
+        }
+      ]))
       .merge(node);
 
     // Launch the layout engine.
