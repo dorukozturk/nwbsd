@@ -80,7 +80,7 @@ export class Graph {
   }
 
   filterHidden (nodes, links) {
-    const nodetable = nodes.map(x => x.name);
+    const nodetable = nodes.map(x => x.key);
 
     const newNodes = [...nodes].filter(x => !x.hidden);
     let newLinks = links.filter(x => {
@@ -90,7 +90,7 @@ export class Graph {
     });
 
     let newNodetable = {};
-    newNodes.forEach((x, i) => newNodetable[x.name] = i);
+    newNodes.forEach((x, i) => newNodetable[x.key] = i);
 
     newLinks.map(x => Object.assign(x, {source: newNodetable[nodetable[x.source]], target: newNodetable[nodetable[x.target]]}));
 
@@ -131,7 +131,7 @@ export class Graph {
     // Set up the labels.
     let card = this.svg.select('.cards')
       .selectAll('.card')
-      .data(nodes, d => d.name);
+      .data(nodes, d => d.key);
     card.exit()
       .transition(t)
       .style('opacity', 0)
@@ -155,7 +155,7 @@ export class Graph {
     // Set up the nodes.
     let node = this.svg.select('.nodes')
       .selectAll('.node')
-      .data(nodes, d => d.name);
+      .data(nodes, d => d.key);
     node.exit()
       .transition(t)
       .style('opacity', 0)
@@ -185,7 +185,7 @@ export class Graph {
     this.cola.nodes(nodes)
       .links(links)
       .groups([])
-      .linkDistance(100)
+      .linkDistance(50)
       .avoidOverlaps(true)
       .flowLayout('y', 50)
       .handleDisconnected(false)

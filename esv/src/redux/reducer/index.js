@@ -35,12 +35,12 @@ const reducer = (state = initial, action = {}) => {
       const nodes = state.get('graph').toJS().nodes;
 
       let table = {};
-      nodes.forEach((x, i) => table[x.name] = i);
+      nodes.forEach((x, i) => table[x.key] = i);
 
       newState = state.withMutations(s => {
         action.data.forEach(d => {
-          s = s.updateIn(['graph', 'nodes', table[d.name], 'x'], val => d.x)
-            .updateIn(['graph', 'nodes', table[d.name], 'y'], val => d.y);
+          s = s.updateIn(['graph', 'nodes', table[d.key], 'x'], val => d.x)
+            .updateIn(['graph', 'nodes', table[d.key], 'y'], val => d.y);
         });
       });
       break;
