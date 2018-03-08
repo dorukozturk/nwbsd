@@ -1,4 +1,5 @@
 import h5py
+import numpy as np
 import os
 from treelib import Tree
 
@@ -62,3 +63,18 @@ class NwbSd(object):
             self._tree = tree
 
         return tree
+
+    def getChildItems(self, path):
+        return [str(i.name) for i in list(self.hdf.get(path).values())]
+
+    def getTimeStamps(self, path):
+        try:
+            return self.hdf.get(os.path.join(path, 'timestamps')).value
+        except AttributeError:
+            pass
+
+    def getIndexFromTimeStamp(self, path, timeStamp):
+        timeStamps = self.getTimeStamps(path).tolist()
+        closest = min(timeStamps, key=lambda x: abs(x-timeStamp))
+
+        return timeStamps.index(closest)
