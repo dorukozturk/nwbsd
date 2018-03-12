@@ -80,7 +80,7 @@ export class Graph {
   }
 
   filterHidden (nodes, links) {
-    const nodetable = nodes.map(x => x.key);
+    const nodetable = nodes.map(x => x.path);
 
     const newNodes = [...nodes].filter(x => !x.hidden);
     let newLinks = links.filter(x => {
@@ -90,7 +90,7 @@ export class Graph {
     });
 
     let newNodetable = {};
-    newNodes.forEach((x, i) => newNodetable[x.key] = i);
+    newNodes.forEach((x, i) => newNodetable[x.path] = i);
 
     newLinks.map(x => Object.assign(x, {source: newNodetable[nodetable[x.source]], target: newNodetable[nodetable[x.target]]}));
 
@@ -126,12 +126,13 @@ export class Graph {
     link = link.enter()
       .append('path')
       .classed('link', true)
+      .classed('softlink', d => d.softlink)
       .merge(link);
 
     // Set up the labels.
     let card = this.svg.select('.cards')
       .selectAll('.card')
-      .data(nodes, d => d.key);
+      .data(nodes, d => d.path);
     card.exit()
       .transition(t)
       .style('opacity', 0)
@@ -155,7 +156,7 @@ export class Graph {
     // Set up the nodes.
     let node = this.svg.select('.nodes')
       .selectAll('.node')
-      .data(nodes, d => d.key);
+      .data(nodes, d => d.path);
     node.exit()
       .transition(t)
       .style('opacity', 0)
