@@ -31,16 +31,20 @@ const reducer = (state = initial, action = {}) => {
       newState = state.updateIn(['graph', 'nodes', action.index, 'hidden'], x => !x);
       break;
 
+    case actionType.toggleCollapsed:
+      newState = state.updateIn(['graph', 'nodes', action.index, 'collapsed'], x => !x);
+      break;
+
     case actionType.savePositions:
       const nodes = state.get('graph').toJS().nodes;
 
       let table = {};
-      nodes.forEach((x, i) => table[x.name] = i);
+      nodes.forEach((x, i) => table[x.path] = i);
 
       newState = state.withMutations(s => {
         action.data.forEach(d => {
-          s = s.updateIn(['graph', 'nodes', table[d.name], 'x'], val => d.x)
-            .updateIn(['graph', 'nodes', table[d.name], 'y'], val => d.y);
+          s = s.updateIn(['graph', 'nodes', table[d.path], 'x'], val => d.x)
+            .updateIn(['graph', 'nodes', table[d.path], 'y'], val => d.y);
         });
       });
       break;

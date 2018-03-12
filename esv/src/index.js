@@ -22,6 +22,9 @@ window.addEventListener('resize', debounce(() => {
 }, 300, debounceOptions));
 
 // Initialize the graph data.
+graph.nodes.forEach(d => {
+  d.collapsed = true;
+});
 store.dispatch(action.setGraphData(graph.nodes, graph.links));
 
 // Set up a node link diagram.
