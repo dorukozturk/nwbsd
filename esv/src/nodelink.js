@@ -126,7 +126,7 @@ export class Graph {
     // Set up the links.
     let link = this.svg.select('.links')
       .selectAll('.link')
-      .data(links);
+      .data(links, d => `${d.source},${d.target}`);
     link.exit()
       .remove();
     link = link.enter()
