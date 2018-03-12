@@ -5,6 +5,9 @@ setGraphData:
 toggleHide:
   - index
 
+toggleCollapsed:
+  - index
+
 savePositions:
   - data
 

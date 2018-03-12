@@ -112,6 +112,12 @@ export class Graph {
   update (nodes_, links_) {
     const { nodes, links } = this.filterHidden(nodes_, links_);
 
+    // Graphical parameters.
+    const collapsed = {
+      width: 20,
+      height: 20
+    };
+
     // Fade-out transition.
     const t = transition()
       .duration(500)
@@ -144,13 +150,15 @@ export class Graph {
       .call(this.cola.drag)
       .merge(card);
 
+    card.style('opacity', d => d.collapsed ? 0 : 1);
+
     // Update the virtual bounding box of the nodes by setting width and height
     // values (will be used by WebCola to perform overlap avoidance).
     const pad = this.pad
     card.each(function (d) {
       const box = this.getBBox();
-      d.width = box.width + 2 * pad;
-      d.height = box.height + 2 * pad;
+      d.width = (d.collapsed ? collapsed.width : box.width) + 2 * pad;
+      d.height = (d.collapsed ? collapsed.height : box.height) + 2 * pad;
     });
 
     // Set up the nodes.
@@ -165,10 +173,6 @@ export class Graph {
     node = node.enter()
       .append('rect')
       .classed('node', true)
-      .attr('width', d => d.width)
-      .attr('height', d => d.height)
-      .attr('rx', 5)
-      .attr('ry', 5)
       .style('fill', d => depthmap(d.depth / this.maxdepth))
       .call(this.cola.drag)
       .on('contextmenu', contextMenu([
@@ -178,9 +182,21 @@ export class Graph {
             store.dispatch(action.toggleHide(i));
             store.dispatch(action.savePositions(node.data()));
           }
+        },
+        {
+          title: 'Expand/collapse this node',
+          action: (d, i) => {
+            store.dispatch(action.toggleCollapsed(i));
+            store.dispatch(action.savePositions(node.data()));
+          }
         }
       ]))
       .merge(node);
+
+    node.attr('width', d => d.collapsed ? 20 : d.width)
+      .attr('height', d => d.collapsed ? 20 : d.height)
+      .attr('rx', d => d.collapsed ? collapsed.width / 2 : 5)
+      .attr('ry', d => d.collapsed ? collapsed.height / 2 : 5);
 
     // Launch the layout engine.
     this.cola.nodes(nodes)
@@ -199,8 +215,8 @@ export class Graph {
     this.cola.on('tick', () => {
       link.attr('d', d => computePath(d.source, d.target));
 
-      node.attr('x', d => d.x - d.width / 2)
-        .attr('y', d => d.y - d.height / 2);
+      node.attr('x', d => d.x - (d.collapsed ? collapsed.width : d.width) / 2)
+        .attr('y', d => d.y - (d.collapsed ? collapsed.height : d.height) / 2);
 
       card.attr('x', d => d.x - d.width / 2 + this.pad)
         .attr('y', d => d.y + d.height / 4 - this.pad);
